@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "settings": {
+    "folder": "GitHub插件",
+    "interval": 1440,
+    "auto": true,
+    "download": true
+  },
+  "projects": [
+    {
+      "repo": "RicardoSJin/bilibili-markdown-notes",
+      "mode": "release",
+      "branch": "",
+      "pattern": "bilibili-markdown-notes*.zip",
+      "prerelease": false,
+      "auto": true,
+      "interval": null
+    },
+    {
+      "repo": "RicardoSJin/ustc-auto-login",
+      "mode": "release",
+      "branch": "",
+      "pattern": "ustc-auto-login-*.zip",
+      "prerelease": false,
+      "auto": true,
+      "interval": null
+    },
+    {
+      "repo": "RicardoSJin/chatgpt-web-enhancer",
+      "mode": "release",
+      "branch": "",
+      "pattern": "chatgpt-web-enhancer-*.zip",
+      "prerelease": false,
+      "auto": true,
+      "interval": null
+    },
+    {
+      "repo": "RicardoSJin/deeplearning-ai-assistant",
+      "mode": "source",
+      "branch": "main",
+      "pattern": "",
+      "prerelease": false,
+      "auto": true,
+      "interval": null
+    }
+  ]
+}

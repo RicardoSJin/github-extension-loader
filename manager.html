@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GitHub 插件下载器</title><link rel="stylesheet" href="style.css"></head>
+<body><main>
+<header><div><span class="eyebrow">GITHUB · EXTENSION LIBRARY</span><h1>插件下载器</h1><p>把项目集中管理，让更新按时到达。</p></div><button id="export">导出配置</button><button id="import">导入配置</button><input id="file" type="file" accept="application/json,.json" hidden></header>
+<div class="notice">下载完成后，请解压并在浏览器扩展管理页手动加载或更新。这里显示的是已下载版本。浏览器退出期间暂停检查。</div>
+<section class="top-grid"><article><h2>添加 GitHub 项目</h2><label for="urls">项目地址，每行一个</label><textarea id="urls" rows="4" placeholder="https://github.com/作者/项目"></textarea><div class="row"><small>支持公开仓库；优先获取 Releases 成品包。</small><button id="add" class="primary">添加项目</button></div></article>
+<article><h2>自动更新设置</h2><form id="settings"><div class="fields"><label>下载子目录<input name="folder" required maxlength="80"></label><label>检查周期（分钟）<input name="interval" type="number" min="1" max="525600" required></label></div><div class="checks"><label><input name="auto" type="checkbox"> 开启定时检查</label><label><input name="download" type="checkbox"> 发现更新自动下载</label></div><div class="row"><small>1440 分钟 = 1 天，保存后重新计时。</small><button type="submit">保存设置</button></div></form></article></section>
+<section><div class="section-head"><div><h2>项目库 <span id="count">0</span></h2><p>按项目保留版本，避免重复下载。</p></div><div class="buttons"><button id="check">全部检查</button><button id="download" class="primary">全部更新</button></div></div><div id="projects"></div></section>
+<section class="logs"><div class="section-head"><h2>最近记录</h2><button id="clear">清空记录</button></div><div id="logs"></div></section>
+<footer>文件保存在浏览器默认下载目录下。源码包可能需要构建；自动下载不会自动安装扩展。</footer>
+</main><div id="toast" role="status" aria-live="polite"></div><script type="module" src="manager.js"></script></body></html>
