@@ -1,4 +1,6 @@
 import {defaults, repoFrom, safeName, settings, chooseAsset, assetKey, projectConfig} from './core.js';
+import {readyDirectory,writeFiles} from './filesystem.js';
+import {boundedBytes,unpack} from './zip.js';
 let chain = Promise.resolve();
 function serial(fn) { const next = chain.then(fn); chain = next.catch(() => {}); return next; }
 async function read() { const {state} = await chrome.storage.local.get('state'); return state || {settings: {...defaults}, projects: [], logs: []}; }
@@ -49,15 +51,26 @@ async function check(s,p,download=false,force=false) {
   try {
     p.latest = await inspect(p); p.checkedAt = Date.now(); p.failures = 0;
     if (!p.latest.url) p.status = p.latest.assets.length ? '请选择发布包或填写唯一匹配规则' : '没有插件发布包，可改为跟踪源码';
-    else if (!force && p.latest.key === p.downloadedKey) p.status = '已下载最新版本';
+    else if (!force && p.latest.key === p.downloadedKey && (!/\.zip$/i.test(p.latest.name) || p.extractedKey===p.latest.key)) p.status = p.extractedKey?'已解压最新版本':'已下载最新版本';
     else if (!download) p.status = '发现可下载版本';
     else {
       const u = new URL(p.latest.url);
       if (u.protocol !== 'https:' || u.hostname !== 'github.com') throw new Error('发布包下载地址不受支持');
-      const filename = [s.settings.folder,safeName(p.repo.replace('/','_')),safeName(p.latest.version),safeName(p.latest.name)].join('/');
+      if(/\.zip$/i.test(p.latest.name)) {
+        const root=await readyDirectory();p.status='正在下载并解压';await save(s);
+        const response=await fetch(p.latest.url,{signal:AbortSignal.timeout(25000)});
+        if(!response.ok)throw new Error(`压缩包下载失败 (${response.status})`);
+        const files=await unpack(await boundedBytes(response.body));
+        p.installPath=await writeFiles(root,p.repo,files);
+        p.downloadedKey=p.latest.key;p.extractedKey=p.latest.key;p.downloadedVersion=p.latest.version;
+        p.status=files.some(f=>f.name==='manifest.json')?'已解压，可加载项目目录':'已解压源码/脚本，不能直接作为扩展加载';
+        delete p.lastDownloadId;log(s,p.repo,`${p.status}：${p.installPath}`);
+      } else {
+      const filename = [s.settings.folder,safeName(p.repo.replace('/','_'))+ '.' + p.latest.name.split('.').at(-1)].join('/');
       const id = await chrome.downloads.download({url:p.latest.url, filename, saveAs:false, conflictAction:'uniquify'});
       p.pending = {id,key:p.latest.key,version:p.latest.version}; p.status = '正在下载';
       log(s,p.repo,`开始下载：${p.latest.version}`);
+      }
     }
     p.nextCheck = Date.now()+interval;
   } catch(e) {
@@ -115,6 +128,7 @@ chrome.runtime.onMessage.addListener((m,sender,reply)=>{
       await save(s); return {errors};
     }
     if (m.type === 'settings') {s.settings=settings(m.value); for(const p of s.projects) p.nextCheck=Date.now()+(p.interval || s.settings.interval)*60000;}
+    if (m.type === 'directoryChanged') {for(const p of s.projects){delete p.extractedKey;delete p.installPath;p.nextCheck=Date.now();}}
     if (m.type === 'project') {
       const p=s.projects.find(p=>p.repo===m.repo); if(!p) throw new Error('项目不存在');
       if(p.pending) throw new Error('请等待当前下载完成后再修改项目');
