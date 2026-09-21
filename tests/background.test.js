@@ -8,7 +8,7 @@ globalThis.chrome={
  downloads:{search:async({id})=>downloads.has(id)?[downloads.get(id)]:[],download:async options=>{const id=nextId++;downloads.set(id,{id,state:'in_progress',...options});return id;},onChanged:event('download')},
  runtime:{id:'test',onInstalled:event('installed'),onStartup:event('startup'),onMessage:event('message'),openOptionsPage:async()=>{}},action:{onClicked:event('action')}
 };
-globalThis.fetch=async url=>{requests++;if(fail)return {ok:false,status:429,headers:new Headers({'retry-after':'120'})};return {ok:true,json:async()=>({id:10,tag_name:'v1.0',assets:[{id:20,name:'chrome.zip',updated_at:'2026-01-01',size:5,browser_download_url:'https://github.com/a/b/releases/download/v1/chrome.zip'}]})};};
+globalThis.fetch=async url=>{requests++;if(fail)return {ok:false,status:429,headers:new Headers({'retry-after':'120'})};return {ok:true,json:async()=>({id:10,tag_name:'v1.0',assets:[{id:20,name:'chrome.crx',updated_at:'2026-01-01',size:5,browser_download_url:'https://github.com/a/b/releases/download/v1/chrome.crx'}]})};};
 await import('../background.js');
 const send=(type,data={})=>new Promise(resolve=>events.message({type,...data},{id:'test'},resolve));
 const flush=()=>send('get');

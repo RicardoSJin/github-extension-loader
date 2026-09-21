@@ -1,4 +1,5 @@
 import {projectConfig} from './core.js';
+import {directory} from './filesystem.js';
 const $=s=>document.querySelector(s); let state; let toastTimer;
 function toast(message){$('#toast').textContent=message;$('#toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.display='none',6500);}
 async function send(type,data={}){const r=await chrome.runtime.sendMessage({type,...data});if(r?.error)throw new Error(r.error);return r;}
@@ -18,6 +19,7 @@ function drawProjects(){
     if(p.lastDownloadId)buttons.append(button('查看文件',()=>chrome.downloads.show(p.lastDownloadId)));
     buttons.append(button('移除',async()=>{if(confirm('从列表移除 '+p.repo+'？已下载文件会保留。')){await send('remove',{repo:p.repo});card.remove();render(await send('get'));}}));head.append(buttons);card.append(head);
     const meta=el('div',undefined,'meta');for(const [k,v]of [['已下载',p.downloadedVersion||'尚未下载'],['最新',p.latest?.version||'尚未检查'],['上次检查',date(p.checkedAt)],['下次检查',state.settings.auto&&p.auto?date(p.nextCheck):'已暂停']]){const d=el('span',k+'  ');d.append(el('strong',v));meta.append(d);}card.append(meta);
+    if(p.installPath)card.append(el('p','加载目录：'+p.installPath));
     const details=el('details');details.append(el('summary','项目设置 · 发布包 / 分支 / 更新周期'));const form=el('form');const fields=el('div',undefined,'fields');
     const modeLabel=el('label','下载来源');const mode=el('select');mode.name='mode';for(const [v,t]of [['release','Releases 插件包'],['source','分支源码（可能需要构建）']]){const o=el('option',t);o.value=v;mode.append(o);}mode.value=p.mode;modeLabel.append(mode);fields.append(modeLabel);
     input(fields,'pattern','包名规则（* 代表任意字符）','text',p.pattern).placeholder='例如 *chrome*.zip';input(fields,'branch','源码分支（空白 = 默认分支）','text',p.branch);
@@ -41,3 +43,8 @@ $('#import').onclick=()=>$('#file').click();$('#file').onchange=()=>action(async
 chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.state)render(changes.state.newValue);});
 document.addEventListener('toggle',e=>{if(e.target.matches('.project details')&&!e.target.open&&!document.querySelector('.project details[open]'))drawProjects();},true);
 action(async()=>render(await send('get'),true));
+const directoryButton=button('选择管理目录',async()=>{
+  const handle=await window.showDirectoryPicker({id:'github-plugins',startIn:'downloads',mode:'readwrite'});
+  await directory(handle);await send('directoryChanged');toast('已授权：'+handle.name+'。点击“全部更新”即可解压到此目录。');
+});
+document.querySelector('header').append(directoryButton);
