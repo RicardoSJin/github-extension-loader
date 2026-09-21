@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GitHub 插件下载器",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "批量管理 GitHub 插件项目，下载发布包并定时检查更新。",
   "permissions": ["storage", "downloads", "alarms"],
   "host_permissions": ["https://api.github.com/*", "https://github.com/*", "https://codeload.github.com/*", "https://release-assets.githubusercontent.com/*", "https://objects.githubusercontent.com/*"],

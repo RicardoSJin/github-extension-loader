@@ -20,7 +20,9 @@
 
 仓库中的 [`examples/RicardoSJin-github-plugins.json`](examples/RicardoSJin-github-plugins.json) 包含 Bilibili Markdown 笔记、USTC 自动登录、ChatGPT Web Enhancer 和 DeepLearning.AI 助手四个公开项目。
 
-下载该 JSON 后，在管理页面点击「导入配置」。默认每 24 小时检查并自动下载；DeepLearning.AI 助手没有 Releases 发布包，因此下载 main 分支源码，其中包含供 Tampermonkey 安装的油猴脚本。其他三个项目下载正式版发布包。
+也可以点击「粘贴配置」，把完整 JSON 内容直接粘贴到输入框并导入。格式错误时会显示原因并保留输入内容。
+
+下载该 JSON 后，在管理页面点击「导入文件」。默认每 24 小时检查并自动下载；DeepLearning.AI 助手没有 Releases 发布包，因此下载 main 分支源码，其中包含供 Tampermonkey 安装的油猴脚本。其他三个项目下载正式版发布包。
 
 ## 使用
 
@@ -45,6 +47,6 @@
 
 使用原生 JavaScript 模块，无依赖、无需编译。运行 `npm test` 验证地址和路径处理、发布包匹配、下载状态、持久任务队列、重复下载、失败和限流。自动测试模拟浏览器 API，并非真实浏览器安装测试。
 
-在 Windows PowerShell 中运行 `./package.ps1`，生成 `dist/github-extension-loader-v1.1.0.zip`。发布包只包含运行所需文件和说明，不包含测试或个人运行数据。
+在 Windows PowerShell 中运行 `./package.ps1`，生成 `dist/github-extension-loader-v1.1.1.zip`。发布包只包含运行所需文件和说明，不包含测试或个人运行数据。
 
 手动验收：添加一个有 Releases 的公开扩展仓库；检查并选择包；解压完成后确认项目目录直接包含 manifest.json；再次更新应跳过同版本；强制重新下载应保留副本；将周期设为 1 分钟，观察下一次检查时间；重启浏览器后确认设置与记录保留。
