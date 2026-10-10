@@ -16,6 +16,10 @@
 6. 点击「选择管理目录」，在系统“下载”中创建或选择 `GitHub插件` 文件夹并允许写入。此授权由浏览器要求，无法代替用户自动确认。
 7. 添加或导入项目后点击「全部更新」。ZIP 会自动解压，每个项目直接放在 `GitHub插件/作者_项目/`，没有版本号或压缩包外层目录；选择含 `manifest.json` 的项目目录加载即可。
 
+## 页面版本与复制配置
+
+页面标题旁显示实际加载的扩展版本，便于确认升级是否生效。点击「复制配置」即可将已保存的全局设置和项目配置复制为 JSON，可直接粘贴导入；与导出文件内容一致，不包含下载记录、目录授权或未保存的表单修改。浏览器拒绝剪贴板写入时会显示选中的文本供手动复制。
+
 ## 导入现成配置
 
 仓库中的 [`examples/RicardoSJin-github-plugins.json`](examples/RicardoSJin-github-plugins.json) 包含 Bilibili Markdown 笔记、USTC 自动登录、ChatGPT Web Enhancer 和 DeepLearning.AI 助手四个公开项目。
@@ -47,6 +51,6 @@
 
 使用原生 JavaScript 模块，无依赖、无需编译。运行 `npm test` 验证地址和路径处理、发布包匹配、下载状态、持久任务队列、重复下载、失败和限流。自动测试模拟浏览器 API，并非真实浏览器安装测试。
 
-在 Windows PowerShell 中运行 `./package.ps1`，生成 `dist/github-extension-loader-v1.1.1.zip`。发布包只包含运行所需文件和说明，不包含测试或个人运行数据。
+在 Windows PowerShell 中运行 `./package.ps1`，生成 `dist/github-extension-loader-v1.1.2.zip`。发布包只包含运行所需文件和说明，不包含测试或个人运行数据。
 
 手动验收：添加一个有 Releases 的公开扩展仓库；检查并选择包；解压完成后确认项目目录直接包含 manifest.json；再次更新应跳过同版本；强制重新下载应保留副本；将周期设为 1 分钟，观察下一次检查时间；重启浏览器后确认设置与记录保留。
