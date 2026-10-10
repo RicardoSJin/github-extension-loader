@@ -1,6 +1,7 @@
 import {projectConfig} from './core.js';
 import {directory} from './filesystem.js';
 const $=s=>document.querySelector(s); let state; let toastTimer;
+$('#app-version').textContent='v'+chrome.runtime.getManifest().version;
 function toast(message){$('#toast').textContent=message;$('#toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').style.display='none',6500);}
 async function send(type,data={}){const r=await chrome.runtime.sendMessage({type,...data});if(r?.error)throw new Error(r.error);return r;}
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;}
@@ -29,7 +30,7 @@ function drawProjects(){
     form.onsubmit=e=>{e.preventDefault();action(async()=>{const f=form.elements;await send('project',{repo:p.repo,value:{mode:f.mode.value,pattern:f.pattern.value,branch:f.branch.value,interval:f.interval.value,auto:f.auto.checked,prerelease:f.prerelease.checked}});toast('项目设置已保存');},save);};details.append(form);card.append(details);root.append(card);
   }
 }
-function render(s,initial=false){state=s;const editing=[...document.querySelectorAll('.project details[open]')];if(!editing.length)drawProjects();else{for(const card of document.querySelectorAll('.project')){const p=s.projects.find(p=>p.repo===card.dataset.repo);if(p)card.querySelector('.status').textContent=p.status;}}
+function render(s,initial=false){state=s;$('#copy-config').disabled=false;const editing=[...document.querySelectorAll('.project details[open]')];if(!editing.length)drawProjects();else{for(const card of document.querySelectorAll('.project')){const p=s.projects.find(p=>p.repo===card.dataset.repo);if(p)card.querySelector('.status').textContent=p.status;}}
   if(initial){const f=$('#settings').elements;f.folder.value=s.settings.folder;f.interval.value=s.settings.interval;f.auto.checked=s.settings.auto;f.download.checked=s.settings.download;}
   $('#logs').replaceChildren(...s.logs.slice(0,40).map(l=>{const d=el('div',undefined,'log');d.append(el('time',date(l.time)),el('span',`${l.repo} · ${l.message}`));return d;}));if(!s.logs.length)$('#logs').append(el('small','还没有下载记录。'));
 }
@@ -38,7 +39,14 @@ $('#settings').onsubmit=e=>{e.preventDefault();action(async()=>{const f=e.target
 $('#check').onclick=()=>action(async()=>{await send('check');toast('检查任务已提交');});
 $('#download').onclick=()=>action(async()=>{await send('check',{download:true});toast('更新任务已提交');});
 $('#clear').onclick=()=>action(()=>send('clearLogs'));
-$('#export').onclick=()=>action(async()=>{const value={version:1,settings:state.settings,projects:state.projects.map(projectConfig)};const u=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));const a=el('a');a.href=u;a.download='github-plugins-config.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),10000);});
+function configurationText(){if(!state)throw new Error('配置尚未加载，请稍后重试');return JSON.stringify({version:1,settings:state.settings,projects:state.projects.map(projectConfig)},null,2);}
+$('#export').onclick=()=>action(async()=>{const u=URL.createObjectURL(new Blob([configurationText()],{type:'application/json'}));const a=el('a');a.href=u;a.download='github-plugins-config.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),10000);});
+$('#copy-config').onclick=()=>action(async()=>{
+  const text=configurationText();
+  try{await navigator.clipboard.writeText(text);toast('配置已复制，可直接粘贴导入（未保存的修改不包含在内）');}
+  catch{$('#copy-text').value=text;$('#copy-dialog').showModal();$('#copy-text').focus();$('#copy-text').select();}
+},$('#copy-config'));
+$('#copy-close').onclick=()=>$('#copy-dialog').close();
 async function importText(text){
   const clean=text.trim().replace(/^\uFEFF/,'');
   if(!clean)throw new Error('请先粘贴配置内容');
