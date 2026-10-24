@@ -55,7 +55,7 @@ GitHub 插件下载器：一个 Chrome / Edge Manifest V3 扩展，可一键发�
 - **一键检测额度**：`/rate_limit` 不计额度；其余请求不超过 1（仓库列表）+ 扫描仓库数（`git/trees/HEAD?recursive=1`）+ 识别出的扩展数（`releases`）。新增检测步骤时保持这个上限
 - **已加载版本**：`management` 只读使用（`getAll`、`getSelf` 和安装 / 启用事件），不得调用 `setEnabled`、`uninstall`（实测 `setEnabled` 关闭再开启不会从磁盘重新读取新版本）。已解压扩展没有路径信息，按清单名称匹配 `installType === 'development'` 的扩展。`chrome.runtime.reload()` 只用于下载器自己，且仅在没有任务时
 - **后台版本自检**：`background.js` 的 `WORKER` 常量必须等于 `manifest.json` 的 `version`（测试校验）。实测 ego-lite 在同一路径覆盖旧版本后首次加载，可能仍运行旧的后台脚本，页面据此提示重新加载
-- **目录授权**：浏览器重启或扩展重新加载（包括 `chrome.runtime.reload()`）后，目录权限可能回到 `prompt`，需用户在页面点击「恢复目录授权」（`requestPermission`）
+- **目录授权**：浏览器重启、扩展重新加载（包括 `chrome.runtime.reload()`），或一段时间没有打开本扩展页面后，目录权限会回到 `prompt`（实测 ego lite 0.6.0.20 的授权提示没有“每次访问时都允许”），需用户在页面点击「恢复目录授权」（`requestPermission`）。因此后台自动解压经常要等用户打开管理页后才能完成
 - **配置导入导出**：格式 `{version: 1, settings, projects}`，最多 500 个项目；不包含下载记录和目录授权
 
 ## 安全约束（不要放宽）
