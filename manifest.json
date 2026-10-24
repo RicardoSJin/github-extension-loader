@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "GitHub 插件下载器",
-  "version": "1.1.2",
-  "description": "批量管理 GitHub 插件项目，下载发布包并定时检查更新。",
-  "permissions": ["storage", "downloads", "alarms"],
+  "version": "1.2.0",
+  "description": "一键发现并批量同步 GitHub 上的浏览器插件，下载发布包、定时检查更新，并提示哪些扩展需要重新加载。",
+  "permissions": ["storage", "downloads", "alarms", "management"],
   "host_permissions": ["https://api.github.com/*", "https://github.com/*", "https://codeload.github.com/*", "https://release-assets.githubusercontent.com/*", "https://objects.githubusercontent.com/*"],
   "background": {"service_worker": "background.js", "type": "module"},
   "action": {"default_title": "打开 GitHub 插件下载器"},

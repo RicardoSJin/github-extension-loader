@@ -8,6 +8,33 @@
   },
   "projects": [
     {
+      "repo": "RicardoSJin/github-extension-loader",
+      "mode": "release",
+      "branch": "",
+      "pattern": "github-extension-loader-v*.zip",
+      "prerelease": false,
+      "auto": true,
+      "interval": null
+    },
+    {
+      "repo": "RicardoSJin/edge-chrome-sync",
+      "mode": "release",
+      "branch": "",
+      "pattern": "edge-chrome-sync-v*.zip",
+      "prerelease": true,
+      "auto": true,
+      "interval": null
+    },
+    {
+      "repo": "RicardoSJin/youtube-new-tab",
+      "mode": "release",
+      "branch": "",
+      "pattern": "youtube-new-tab-v*.zip",
+      "prerelease": true,
+      "auto": true,
+      "interval": null
+    },
+    {
       "repo": "RicardoSJin/bilibili-markdown-notes",
       "mode": "release",
       "branch": "",
@@ -20,7 +47,7 @@
       "repo": "RicardoSJin/ustc-auto-login",
       "mode": "release",
       "branch": "",
-      "pattern": "ustc-auto-login-*.zip",
+      "pattern": "ustc-auto-login-v*.zip",
       "prerelease": false,
       "auto": true,
       "interval": null
